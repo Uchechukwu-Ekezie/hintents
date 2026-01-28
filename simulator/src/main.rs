@@ -10,6 +10,8 @@ struct SimulationRequest {
     result_meta_xdr: String,
     // Key XDR -> Entry XDR
     ledger_entries: Option<HashMap<String, String>>,
+    timestamp: Option<i64>,
+    ledger_sequence: Option<u32>,
 }
 
 #[derive(Debug, Serialize)]
@@ -85,6 +87,18 @@ fn main() {
     let host = soroban_env_host::Host::default();
     host.set_diagnostic_level(soroban_env_host::DiagnosticLevel::Debug)
         .unwrap();
+
+    // Override Ledger Info if provided
+    if request.timestamp.is_some() || request.ledger_sequence.is_some() {
+        let mut ledger_info = host.get_ledger_info().unwrap_or_default();
+        if let Some(ts) = request.timestamp {
+            ledger_info.timestamp = ts as u64;
+        }
+        if let Some(seq) = request.ledger_sequence {
+            ledger_info.sequence_number = seq;
+        }
+        host.set_ledger_info(ledger_info).unwrap();
+    }
 
     let mut loaded_entries_count = 0;
 
