@@ -1,4 +1,4 @@
-.PHONY: build test lint lint-unused clean
+.PHONY: build test lint lint-unused test-unused clean
 
 # Build the main binary
 build:
@@ -15,6 +15,10 @@ lint:
 # Run unused code detection
 lint-unused:
 	./scripts/lint-unused.sh
+
+# Test unused code detection setup
+test-unused:
+	./scripts/test-unused-detection.sh
 
 # Clean build artifacts
 clean:
